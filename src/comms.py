@@ -24,8 +24,13 @@ if len(sys.argv) > 1:
 
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
-socket.bind(tcp://*:%s" % port)
+socket.bind("tcp://*:%s" % port)
 
-
+while True:
+    topic = 001
+    messagedata = random.randrange(1,215) - 80
+    print "%d %d" % (topic, messagedata)
+    socket.send("%d %d" % (topic,messagedata))
+    time.sleep(5)
 
 
