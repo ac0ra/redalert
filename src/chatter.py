@@ -42,8 +42,8 @@ def mcastrecv():
         except socket.error, e:
             print 'Exception'
         hexdata = binascii.hexlify(data)
-        print 'Data = %s' % hexdata
-
+        print 'HexData = %s' % hexdata
+        print 'Data = %s' % data
 
 
 

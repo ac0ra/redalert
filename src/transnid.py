@@ -51,3 +51,13 @@ class decoder(json.JSONDecoder):
         else:
             inst = d
         return inst
+
+
+class cryptozmq(object):
+
+class cryptomcast(object):
+
+class plainzmq(object):
+
+class plainmcast(object:
+

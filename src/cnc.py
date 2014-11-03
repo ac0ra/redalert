@@ -87,6 +87,11 @@ def assemble_command(crypto,command, clientID, pubkey, confhash, config):
             modjson(commandlet, 'confhash', confhash)
             modjson(commandlet, 'command', command)
             modjson(commandlet, 'parameters', config)
+    elif crypto == True:
+        if command == 'connect':
+            assemble_command(False, 'connect', clientID, bpubkey, confhash, config)
+            modjson(commandlet,
+
 
 assemble_command(False, 'connect', clientID, bpubkey, confhash, config)
 
@@ -96,3 +101,7 @@ print 'ENCODED:', data_string
 
 crypto_string = json.dumps(cryptolet, sort_keys=True, indent=2)
 print 'ENCRYPTED:', crypto_string
+
+print 'Sending Connect String Via Multicast'
+
+mcastsend(str(commandlet))
