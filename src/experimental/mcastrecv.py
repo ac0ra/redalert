@@ -40,7 +40,7 @@ def mcastrecv():
         except socket.error, e:
             print 'Exception'
         print 'Data = %s' % data
-        ddata = ast.literal_eval(data)
+        ddata = json.loads(data)
         recv_json = json.dumps(ddata, sort_keys=True, indent=2)
         print 'JSON:', recv_json
 

@@ -15,7 +15,7 @@ from Crypto import Random
 from Crypto.Hash import SHA256
 import json
 from chatter import mcastrecv,mcastsend
-
+import ast
 
 
 ## TO DO ##
@@ -28,15 +28,22 @@ from chatter import mcastrecv,mcastsend
 # 
 
 
+def modjson(adict, k, v):
+    for key in adict.keys():
+        if key == k:
+            adict[key] = v
+        elif type(adict[key]) is dict:
+            modjson(adict[key], k, v)
+
 def generate_new_keypair(keysize):
     rgen = Random.new().read
     return RSA.generate(keysize, rgen)
 
 def get_conf_hash(config):
-    return SHA256.new(config).hexdigest()
+    return SHA256.new(str(config)).hexdigest()
 
 def check_conf_hash(config,newconfhash):
-    return SHA256.new(config).hexdigest() == newconfhash
+    return SHA256.new(str(config)).hexdigest() == newconfhash
 
 def pubkey_manage(action, location, key='null'):
     if action == 'save':
@@ -48,7 +55,31 @@ def pubkey_manage(action, location, key='null'):
         key = RSA.importKey(f.read())
         return key
 
-config = "{'netid': '2810', 'netconf': { 'ipaddress': '172.24.168.26', 'port': '8473', 'mask': '20' } } "
+def assemble_command(crypto,command, clientID, pubkey, confhash, config):
+    if crypto == False:
+        if command == 'connect':
+            modjson(commandlet, 'clientID', clientID)
+            modjson(commandlet, 'pubkey', pubkey)
+            modjson(commandlet, 'confhash', confhash)
+            modjson(commandlet, 'command', command)
+            modjson(commandlet, 'parameters', config)
+    elif crypto == True:
+        if command == 'connect':
+            assemble_command(False, 'connect', clientID, bpubkey, confhash, config)
+            #modjson(commandlet,
+
+def assemble_endpoint(netid, ipaddress, port, mask):
+        endpoint = json.loads(ep)
+        modjson(endpoint, 'netid', netid)
+        modjson(endpoint, 'ipaddress', ipaddress)
+        modjson(endpoint, 'port', port)
+        modjson(endpoint, 'mask', mask)
+        return endpoint
+        
+
+#config = "{'netid': '2810', 'netconf': { 'ipaddress': '172.24.168.26', 'port': '8473', 'mask': '20' } }"
+
+ep = '{"netid": null, "netconf": { "ipaddress": null, "port": null, "mask": null } }'
 
 clientID = '1337'
 
@@ -64,34 +95,16 @@ public_hostkey = '%s' % (hostkey.publickey())
 bpubkey = b64encode(public_hostkey)
 
 
-confhash = get_conf_hash(config)
 
-command = config
+#command = config
 
 testconnectlet = [ { 'clientID': 'random','pubkey': 'pubkey', 'confhash': 'confhash', 'CONNECT': { 'netid': 'netid', 'netconf': { 'ipaddress': 'ipaddr', 'port': 'portnumber', 'mask': 'mask' } } } ]
 commandlet = { 'clientID': 'clientid', 'pubkey': 'pubkey', 'confhash': 'pubkey', 'command':'command', 'parameters':'null'}
 cryptolet = { 'destpubkey': 'dpk', 'ciphertext': 'ctext'}
 
-def modjson(adict, k, v):
-    for key in adict.keys():
-        if key == k:
-            adict[key] = v
-        elif type(adict[key]) is dict:
-            modjson(adict[key], k, v)
+config = assemble_endpoint('2811', '172.24.168.26', '8473', '20')
 
-def assemble_command(crypto,command, clientID, pubkey, confhash, config):
-    if crypto == False:
-        if command == 'connect':
-            modjson(commandlet, 'clientID', clientID)
-            modjson(commandlet, 'pubkey', pubkey)
-            modjson(commandlet, 'confhash', confhash)
-            modjson(commandlet, 'command', command)
-            modjson(commandlet, 'parameters', config)
-    elif crypto == True:
-        if command == 'connect':
-            assemble_command(False, 'connect', clientID, bpubkey, confhash, config)
-            modjson(commandlet,
-
+confhash = get_conf_hash(config)
 
 assemble_command(False, 'connect', clientID, bpubkey, confhash, config)
 
