@@ -99,22 +99,31 @@ bpubkey = b64encode(public_hostkey)
 #command = config
 
 testconnectlet = [ { 'clientID': 'random','pubkey': 'pubkey', 'confhash': 'confhash', 'CONNECT': { 'netid': 'netid', 'netconf': { 'ipaddress': 'ipaddr', 'port': 'portnumber', 'mask': 'mask' } } } ]
-commandlet = { 'clientID': 'clientid', 'pubkey': 'pubkey', 'confhash': 'pubkey', 'command':'command', 'parameters':'null'}
-cryptolet = { 'destpubkey': 'dpk', 'ciphertext': 'ctext'}
+commandlet = { "clientID": 'clientid', "pubkey": 'pubkey', "confhash": 'pubkey', "command":'command', "parameters":'null'}
+#cryptolet = { 'destpubkey': 'dpk', 'ciphertext': 'ctext'}
 
-config = assemble_endpoint('2811', '172.24.168.26', '8473', '20')
+#config = assemble_endpoint('2811', '172.24.168.26', '8473', '20')
 
-confhash = get_conf_hash(config)
+#confhash = get_conf_hash(config)
 
-assemble_command(False, 'connect', clientID, bpubkey, confhash, config)
-
-data_string = json.dumps(commandlet, sort_keys=True, indent=2)
-print 'ENCODED:', data_string
+#assemble_command(False, 'connect', clientID, bpubkey, confhash, config)
 
 
-crypto_string = json.dumps(cryptolet, sort_keys=True, indent=2)
-print 'ENCRYPTED:', crypto_string
 
-print 'Sending Connect String Via Multicast'
+#data_string = json.dumps(commandlet, sort_keys=True, indent=2)
+#print 'ENCODED:', data_string
 
-mcastsend(str(commandlet))
+
+#crypto_string = json.dumps(cryptolet, sort_keys=True, indent=2)
+#print 'ENCRYPTED:', crypto_string
+
+#print 'Sending Connect String Via Multicast'
+
+#mcastsend(json.dumps(commandlet))
+
+for n in range(10):
+    config = assemble_endpoint(n, '172.24.168.26', '8473', '20')
+    confhash = get_conf_hash(config)
+    assemble_command(False, 'connect', clientID, bpubkey, confhash, config)
+    mcastsend(json.dumps(commandlet))
+
