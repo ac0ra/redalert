@@ -16,7 +16,8 @@ from Crypto.Hash import SHA256
 import json
 from chatter import mcastrecv,mcastsend
 import ast
-
+import time
+import random
 
 ## TO DO ##
 # Cluster tasks,
@@ -121,9 +122,13 @@ commandlet = { "clientID": 'clientid', "pubkey": 'pubkey', "confhash": 'pubkey',
 
 #mcastsend(json.dumps(commandlet))
 
-for n in range(10):
-    config = assemble_endpoint(n, '172.24.168.26', '8473', '20')
+
+
+for n in range(20000):
+    random.seed()
+    config = assemble_endpoint(random.randint(1,100), '172.24.168.26', '8473', '20')
     confhash = get_conf_hash(config)
     assemble_command(False, 'connect', clientID, bpubkey, confhash, config)
     mcastsend(json.dumps(commandlet))
+    time.sleep(2)
 
