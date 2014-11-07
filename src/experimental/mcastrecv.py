@@ -12,13 +12,41 @@ import socket
 import struct
 import os
 import json
-import ast
-
-
+from netaddr import *
 
 MCAST_GRP = '224.1.1.192'
 MCAST_PORT = 8472
 
+network = {}
+hosts = {}
+
+def getnet(ip):
+    net = IPNetwork(ip)
+    return str(net.cidr) 
+
+def networkadd(id, cidr):
+    revnetwork = {}
+    global network
+    revnetwork = {value:key for key, value in network.iteritems()}
+    if cidr in revnetwork:
+        return revnetwork.get(cidr)
+    else:
+        for n in range(35535):
+            if n not in network:
+                network[n] = cidr
+                return n
+
+#def networkdel(id, ip):
+
+#def networksort():
+
+#def hostadd(nid, id, ip, port):
+
+#def hostfind(nid, id, ip, port):
+
+#def hostdel(nid, id):
+
+#def hostsort():
 
 def mcastrecv():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -39,10 +67,12 @@ def mcastrecv():
             data, addr = sock.recvfrom(1024)
         except socket.error, e:
             print 'Exception'
-        print 'Data = %s' % data
+        #print 'Data = %s' % data
         ddata = json.loads(data)
-        recv_json = json.dumps(ddata, sort_keys=True, indent=2)
-        print 'JSON:', recv_json
+        for key, value in ddata.items():
+            print key, value
+        #recv_json = json.dumps(ddata, sort_keys=True, indent=2)
+        #print 'JSON:', recv_json
 
 
 

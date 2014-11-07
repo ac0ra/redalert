@@ -124,11 +124,11 @@ commandlet = { "clientID": 'clientid', "pubkey": 'pubkey', "confhash": 'pubkey',
 
 
 
-for n in range(20000):
+for n in range(10):
     random.seed()
     config = assemble_endpoint(random.randint(1,100), '172.24.168.26', '8473', '20')
     confhash = get_conf_hash(config)
     assemble_command(False, 'connect', clientID, bpubkey, confhash, config)
     mcastsend(json.dumps(commandlet))
-    time.sleep(2)
+    #time.sleep(2)
 
